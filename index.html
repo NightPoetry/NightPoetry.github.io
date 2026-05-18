@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FasCut - Support</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #f5f5f7;
+      --card: #ffffff;
+      --text: #1d1d1f;
+      --text-secondary: #6e6e73;
+      --border: #d2d2d7;
+      --accent: #0071e3;
+      --accent-hover: #0077ed;
+      --success: #30b158;
+      --radius: 18px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Navigation ── */
+    nav {
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      background: rgba(245,245,247,0.8);
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+    }
+    nav .nav-inner {
+      max-width: 1024px; margin: 0 auto;
+      padding: 0 24px;
+      height: 52px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    nav .logo { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
+    nav .nav-links { display: flex; gap: 28px; list-style: none; }
+    nav .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.15s; }
+    nav .nav-links a:hover { color: var(--accent); }
+
+    /* ── Hero ── */
+    .hero {
+      max-width: 720px; margin: 0 auto;
+      padding: 80px 24px 64px;
+      text-align: center;
+    }
+    .hero .app-icon {
+      width: 88px; height: 88px;
+      background: linear-gradient(135deg, #1d1d1f 0%, #3a3a3c 100%);
+      border-radius: 22px;
+      margin: 0 auto 28px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    }
+    .hero .app-icon svg { width: 44px; height: 44px; }
+    .hero h1 { font-size: 48px; font-weight: 700; letter-spacing: -1px; margin-bottom: 12px; }
+    .hero .subtitle { font-size: 21px; color: var(--text-secondary); font-weight: 500; line-height: 1.4; }
+    .hero .badge {
+      display: inline-block; margin-top: 20px;
+      padding: 6px 16px;
+      background: #1d1d1f;
+      color: #f5f5f7;
+      border-radius: 20px;
+      font-size: 13px; font-weight: 600;
+    }
+
+    /* ── Sections ── */
+    .section {
+      max-width: 800px; margin: 0 auto; padding: 0 24px 64px;
+    }
+    .section h2 {
+      font-size: 32px; font-weight: 700; letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+    .section .section-intro {
+      font-size: 17px; color: var(--text-secondary);
+      margin-bottom: 32px; line-height: 1.5;
+    }
+
+    /* ── Feature Grid ── */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      transition: box-shadow 0.2s;
+    }
+    .feature-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+    .feature-card .feature-icon {
+      width: 44px; height: 44px;
+      background: #f5f5f7;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+    }
+    .feature-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 6px; letter-spacing: -0.2px; }
+    .feature-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+
+    /* ── Feedback Form ── */
+    .form-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 40px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 560px) { .form-row { grid-template-columns: 1fr; } }
+
+    .form-group { margin-bottom: 20px; }
+    .form-group label {
+      display: block; font-size: 13px; font-weight: 600;
+      color: var(--text); margin-bottom: 6px;
+    }
+    .form-group label .optional { color: var(--text-secondary); font-weight: 400; }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 15px;
+      font-family: inherit;
+      color: var(--text);
+      background: #fafafa;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      -webkit-appearance: none;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(0,113,227,0.12);
+      background: #fff;
+    }
+    .form-group textarea { min-height: 120px; resize: vertical; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 28px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px; font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      -webkit-appearance: none;
+    }
+    .btn:hover { background: var(--accent-hover); }
+    .btn:active { transform: scale(0.98); }
+
+    .form-success {
+      display: none;
+      padding: 16px 20px;
+      background: #f0faf3;
+      border: 1px solid #b8e6c7;
+      border-radius: 12px;
+      color: #1d6d3a;
+      font-size: 14px; font-weight: 500;
+      margin-top: 16px;
+    }
+
+    .form-error {
+      display: none;
+      padding: 16px 20px;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 12px;
+      color: #991b1b;
+      font-size: 14px; font-weight: 500;
+      margin-top: 16px;
+    }
+
+    /* ── Privacy ── */
+    .privacy-content {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 40px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    .privacy-content h3 { font-size: 18px; font-weight: 600; color: var(--text); margin: 28px 0 10px; }
+    .privacy-content h3:first-child { margin-top: 0; }
+    .privacy-content ul { padding-left: 20px; margin: 8px 0; }
+    .privacy-content li { margin-bottom: 4px; }
+    .privacy-content .last-updated {
+      margin-top: 32px; padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 13px; color: #999;
+    }
+
+    /* ── Contact ── */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .contact-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      text-align: center;
+    }
+    .contact-card .contact-icon {
+      width: 40px; height: 40px;
+      background: #f5f5f7;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .contact-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+    .contact-card a, .contact-card p { font-size: 14px; color: var(--text-secondary); text-decoration: none; }
+    .contact-card a:hover { color: var(--accent); }
+
+    /* ── Footer ── */
+    footer {
+      max-width: 800px; margin: 0 auto;
+      padding: 32px 24px 48px;
+      display: flex; justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border);
+    }
+    footer .copyright { font-size: 12px; color: #999; }
+    footer .footer-links { display: flex; gap: 20px; list-style: none; }
+    footer .footer-links a { font-size: 12px; color: #999; text-decoration: none; }
+    footer .footer-links a:hover { color: var(--accent); }
+
+    @media (max-width: 640px) {
+      .hero { padding: 48px 24px 40px; }
+      .hero h1 { font-size: 36px; }
+      .hero .subtitle { font-size: 17px; }
+      .section h2 { font-size: 26px; }
+      .form-card { padding: 24px; }
+      footer { flex-direction: column; gap: 12px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <span class="logo">FasCut</span>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#feedback">Feedback</a></li>
+        <li><a href="#privacy">Privacy</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <div class="app-icon">
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+        <rect x="4" y="8" width="36" height="28" rx="4" stroke="#fff" stroke-width="2.5" fill="none"/>
+        <path d="M16 8V36" stroke="#fff" stroke-width="2.5"/>
+        <path d="M28 8V36" stroke="#fff" stroke-width="2.5"/>
+        <polygon points="18,16 26,22 18,28" fill="#fff"/>
+      </svg>
+    </div>
+    <h1>FasCut</h1>
+    <p class="subtitle">Cut by instinct. No menus,&nbsp;no&nbsp;clutter.</p>
+    <span class="badge">Available on macOS</span>
+  </section>
+
+  <!-- ── Features ── -->
+  <section class="section" id="features">
+    <h2>Designed for flow</h2>
+    <p class="section-intro">Every tool is where your hand expects it to be. No hunting, no guessing — just the fastest edit you've ever made.</p>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1d1d1f" stroke-width="2" stroke-linecap="round">
+            <rect x="3" y="6" width="18" height="12" rx="2"/>
+            <line x1="9" y1="6" x2="9" y2="18"/>
+            <line x1="15" y1="6" x2="15" y2="18"/>
+            <line x1="11" y1="10" x2="13" y2="10"/>
+          </svg>
+        </div>
+        <h3>Space Erase</h3>
+        <p>Select a gap and erase it. Clips snap together — that's a delete, no jargon, no dialog boxes.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1d1d1f" stroke-width="2" stroke-linecap="round">
+            <rect x="3" y="4" width="8" height="12" rx="1.5"/>
+            <rect x="13" y="8" width="8" height="12" rx="1.5"/>
+            <path d="M11 10h2"/>
+          </svg>
+        </div>
+        <h3>Physics Stack</h3>
+        <p>Clips push against each other like physical objects. Drag one and the rest stack neatly behind it.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1d1d1f" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="7" r="3"/>
+            <line x1="12" y1="10" x2="12" y2="20"/>
+            <path d="M8 15l4-4 4 4"/>
+          </svg>
+        </div>
+        <h3>Pin to Lock</h3>
+        <p>Anchor any clip in place with one click. Pinned clips hold firm while everything else slides around them.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Feedback ── -->
+  <section class="section" id="feedback">
+    <h2>Something not right?</h2>
+    <p class="section-intro">We aim for tools that feel like touching glass. If anything breaks that instinct, tell us — we fix it within one iteration cycle.</p>
+    <div class="form-card">
+      <form id="feedback-form" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Name <span class="optional">(optional)</span></label>
+            <input type="text" id="name" name="name" placeholder="Your name" autocomplete="name">
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="message">What felt unintuitive?</label>
+          <textarea id="message" name="message" placeholder="Describe what you expected to happen, and what happened instead." required></textarea>
+        </div>
+        <button type="submit" class="btn" id="submit-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Send Feedback
+        </button>
+        <div class="form-success" id="form-success" role="status">
+          Thank you. Your feedback has been submitted. We'll address it promptly.
+        </div>
+        <div class="form-error" id="form-error" role="alert">
+          Unable to send at this moment. Please email us directly.
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ── Privacy ── -->
+  <section class="section" id="privacy">
+    <h2>Privacy Policy</h2>
+    <p class="section-intro">We take your privacy seriously. Here is how we handle your data.</p>
+    <div class="privacy-content">
+      <h3>1. Information We Collect</h3>
+      <p>FasCut is a native macOS application. We do <strong>not</strong> collect, store, or transmit any personal data from the app itself. The app operates entirely on your device and requires no account or sign-in.</p>
+
+      <h3>2. Feedback Form</h3>
+      <p>When you voluntarily submit feedback through this website, we collect:</p>
+      <ul>
+        <li><strong>Name</strong> (optional) — used only to credit you if your suggestion is implemented</li>
+        <li><strong>Email address</strong> — used solely to respond to your feedback or notify you about its resolution</li>
+        <li><strong>Feedback content</strong> — used to improve the product</li>
+      </ul>
+      <p>This data is never shared, sold, or used for marketing. It is retained only as long as needed to process your feedback.</p>
+
+      <h3>3. Microphone Access</h3>
+      <p>FasCut requests microphone permission solely for recording audio directly onto the timeline. All audio recordings are stored locally on your device. No audio data is ever transmitted externally.</p>
+
+      <h3>4. Third-Party Services</h3>
+      <p>FasCut does not integrate any third-party analytics, advertising, or tracking frameworks. Your activity within the app is never monitored or reported.</p>
+
+      <h3>5. Children's Privacy</h3>
+      <p>FasCut is not directed at children under the age of 13. We do not knowingly collect personal information from children.</p>
+
+      <h3>6. Changes to This Policy</h3>
+      <p>We may update this policy from time to time. Changes will be posted on this page.</p>
+
+      <p class="last-updated">Last updated: May 18, 2026</p>
+    </div>
+  </section>
+
+  <!-- ── Contact ── -->
+  <section class="section" id="contact">
+    <h2>Contact</h2>
+    <p class="section-intro">Need help or have questions? Reach out directly.</p>
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="contact-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1d1d1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
+        </div>
+        <h3>Email</h3>
+        <a href="mailto:NightPoetry2025@outlook.com">NightPoetry2025@outlook.com</a>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1d1d1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+        </div>
+        <h3>Developer</h3>
+        <p>NightPoetry / FasFox</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p class="copyright">&copy; 2026 NightPoetry. All rights reserved.</p>
+    <ul class="footer-links">
+      <li><a href="#privacy">Privacy Policy</a></li>
+      <li><a href="#feedback">Feedback</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </footer>
+
+  <script>
+    (function() {
+      var form = document.getElementById('feedback-form');
+      var successEl = document.getElementById('form-success');
+      var errorEl = document.getElementById('form-error');
+      var submitBtn = document.getElementById('submit-btn');
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        successEl.style.display = 'none';
+        errorEl.style.display = 'none';
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending...';
+
+        var data = new FormData(form);
+        var body = new URLSearchParams(data).toString();
+
+        fetch('https://spring-sunset-579f.carinnamaile78.workers.dev/api/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: body
+        }).then(function(res) {
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          form.reset();
+          successEl.style.display = 'block';
+        }).catch(function() {
+          errorEl.style.display = 'block';
+        }).finally(function() {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Send Feedback';
+        });
+      });
+    })();
+  </script>
+
+</body>
+</html>
