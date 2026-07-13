@@ -1,461 +1,770 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FasCut - Support</title>
-  <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>腾狐科技工作室 · 夜诗 — 触即响</title>
+<meta name="description" content="腾狐科技工作室 · 夜诗（NightPoetry）的个人作品站。一个人写代码，做快而利落的工具 —— 为人类，也为 AI。主要作品：FasCut 直觉式视频剪辑、WhenScript 反应式编程语言。">
+<meta name="author" content="夜诗 NightPoetry">
+<meta name="theme-color" content="#0A0A0F">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="favicon.svg">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="腾狐科技工作室 · 夜诗 — 触即响 · TengFox Studio">
+<meta property="og:description" content="一个人写代码，做快而利落的工具 —— 为人类，也为 AI。 / A one-person studio building fast, sharp tools — for humans and AI.">
+<meta property="og:image" content="assets/fascut-editing.png">
+<meta property="og:url" content="https://nightpoetry.github.io/">
+<meta name="twitter:card" content="summary_large_image">
 
-    :root {
-      --bg: #f5f5f7;
-      --card: #ffffff;
-      --text: #1d1d1f;
-      --text-secondary: #6e6e73;
-      --border: #d2d2d7;
-      --accent: #0071e3;
-      --accent-hover: #0077ed;
-      --success: #30b158;
-      --radius: 18px;
-    }
+<!-- Backward-compat: Apple 备案的隐私政策链接曾是 https://nightpoetry.github.io#privacy，
+     FasCut 已迁至 /fascut/，这里把老链接透明转发过去，避免 App Store 侧断链。 -->
+<script>
+  (function () {
+    if (location.hash === '#privacy') { location.replace('fascut/#privacy'); return; }
+    /* 语言：本地覆盖 > 系统语言（zh* → 中文，其余 → English），在渲染前定好，避免闪烁 */
+    try {
+      var saved = localStorage.getItem('tf-lang');
+      var sys = (navigator.language || navigator.userLanguage || 'zh').toLowerCase();
+      var lang = saved || (sys.indexOf('zh') === 0 ? 'zh' : 'en');
+      var de = document.documentElement;
+      if (lang === 'en') { de.classList.add('i18n-en'); de.lang = 'en';
+        document.title = 'TengFox Studio · NightPoetry — Touch, react.'; }
+      else { de.lang = 'zh-CN'; }
+    } catch (e) {}
+  })();
+</script>
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-    }
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 
-    /* ── Navigation ── */
-    nav {
-      position: sticky; top: 0; z-index: 10;
-      backdrop-filter: saturate(180%) blur(20px);
-      -webkit-backdrop-filter: saturate(180%) blur(20px);
-      background: rgba(245,245,247,0.8);
-      border-bottom: 1px solid rgba(0,0,0,0.08);
-    }
-    nav .nav-inner {
-      max-width: 1024px; margin: 0 auto;
-      padding: 0 24px;
-      height: 52px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    nav .logo { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
-    nav .nav-links { display: flex; gap: 28px; list-style: none; }
-    nav .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.15s; }
-    nav .nav-links a:hover { color: var(--accent); }
+  :root{
+    --ink:#0A0A0F; --ink-2:#101018; --ink-3:#15151f;
+    --fox:#FF7A18; --ember:#FF3D6E; --volt:#7C5CFF; --cyan:#35E0F0;
+    --paper:#F4F2F7; --mist:#B6B6CC; --faint:#6C6C84;
+    --line:rgba(255,255,255,.09);
+    --line-2:rgba(255,255,255,.06);
+    --glass:rgba(255,255,255,.035);
+    --glass-2:rgba(255,255,255,.06);
+    --aurora:linear-gradient(102deg,var(--fox) 2%,var(--ember) 36%,var(--volt) 68%,var(--cyan) 100%);
+    --maxw:1140px;
+    --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue","Microsoft YaHei",system-ui,sans-serif;
+    --mono:ui-monospace,"SF Mono","JetBrains Mono","Fira Code",Menlo,Consolas,monospace;
+  }
 
-    /* ── Hero ── */
-    .hero {
-      max-width: 720px; margin: 0 auto;
-      padding: 80px 24px 64px;
-      text-align: center;
-    }
-    .hero .app-icon {
-      width: 88px; height: 88px;
-      background: linear-gradient(135deg, #1d1d1f 0%, #3a3a3c 100%);
-      border-radius: 22px;
-      margin: 0 auto 28px;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-    }
-    .hero .app-icon svg { width: 44px; height: 44px; }
-    .hero h1 { font-size: 48px; font-weight: 700; letter-spacing: -1px; margin-bottom: 12px; }
-    .hero .subtitle { font-size: 21px; color: var(--text-secondary); font-weight: 500; line-height: 1.4; }
-    .hero .badge {
-      display: inline-block; margin-top: 20px;
-      padding: 6px 16px;
-      background: #1d1d1f;
-      color: #f5f5f7;
-      border-radius: 20px;
-      font-size: 13px; font-weight: 600;
-    }
+  /* ── i18n visibility ── */
+  :root:not(.i18n-en) [data-lang="en"]{display:none!important}
+  :root.i18n-en [data-lang="zh"]{display:none!important}
 
-    /* ── Sections ── */
-    .section {
-      max-width: 800px; margin: 0 auto; padding: 0 24px 64px;
-    }
-    .section h2 {
-      font-size: 32px; font-weight: 700; letter-spacing: -0.5px;
-      margin-bottom: 8px;
-    }
-    .section .section-intro {
-      font-size: 17px; color: var(--text-secondary);
-      margin-bottom: 32px; line-height: 1.5;
-    }
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--sans);
+    background:var(--ink);
+    color:var(--paper);
+    line-height:1.6;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  a{color:inherit;text-decoration:none}
+  ::selection{background:rgba(255,122,24,.30);color:#fff}
+  :focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:4px}
 
-    /* ── Feature Grid ── */
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 20px;
-    }
-    .feature-card {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 32px 28px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      transition: box-shadow 0.2s;
-    }
-    .feature-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
-    .feature-card .feature-icon {
-      width: 44px; height: 44px;
-      background: #f5f5f7;
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 20px;
-    }
-    .feature-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 6px; letter-spacing: -0.2px; }
-    .feature-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+  /* ─── Ambient background layers ─── */
+  .bg-aurora{
+    position:fixed;inset:-20%;z-index:-3;pointer-events:none;
+    background:
+      radial-gradient(48vw 48vw at 12% 4%, rgba(255,122,24,.22), transparent 60%),
+      radial-gradient(46vw 46vw at 88% 12%, rgba(124,92,255,.20), transparent 62%),
+      radial-gradient(52vw 52vw at 72% 96%, rgba(53,224,240,.14), transparent 60%),
+      radial-gradient(40vw 40vw at 30% 88%, rgba(255,61,110,.15), transparent 60%);
+    filter:blur(28px);
+    animation:drift 26s ease-in-out infinite alternate;
+  }
+  @keyframes drift{
+    0%{transform:translate3d(0,0,0) scale(1)}
+    100%{transform:translate3d(0,-2.2%,0) scale(1.06)}
+  }
+  .bg-grid{
+    position:fixed;inset:0;z-index:-3;pointer-events:none;
+    background-image:linear-gradient(var(--line-2) 1px,transparent 1px),linear-gradient(90deg,var(--line-2) 1px,transparent 1px);
+    background-size:64px 64px;
+    -webkit-mask-image:radial-gradient(120% 80% at 50% 0%,#000 0%,transparent 72%);
+    mask-image:radial-gradient(120% 80% at 50% 0%,#000 0%,transparent 72%);
+    opacity:.5;
+  }
+  #embers{position:fixed;inset:0;z-index:-2;pointer-events:none}
+  .cursor-glow{
+    position:fixed;top:0;left:0;width:520px;height:520px;z-index:-1;pointer-events:none;
+    margin:-260px 0 0 -260px;border-radius:50%;
+    background:radial-gradient(circle, rgba(255,122,24,.10), rgba(124,92,255,.06) 42%, transparent 66%);
+    mix-blend-mode:screen;opacity:0;transition:opacity .5s ease;
+    transform:translate3d(50vw,40vh,0);
+  }
 
-    /* ── Feedback Form ── */
-    .form-card {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 40px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    @media (max-width: 560px) { .form-row { grid-template-columns: 1fr; } }
+  /* ─── Shared bits ─── */
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+  .kick{
+    font-family:var(--mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--faint);display:inline-flex;align-items:center;gap:10px;
+  }
+  .kick::before{content:"";width:26px;height:1px;background:var(--aurora)}
+  .grad{
+    background:var(--aurora);-webkit-background-clip:text;background-clip:text;color:transparent;
+  }
 
-    .form-group { margin-bottom: 20px; }
-    .form-group label {
-      display: block; font-size: 13px; font-weight: 600;
-      color: var(--text); margin-bottom: 6px;
-    }
-    .form-group label .optional { color: var(--text-secondary); font-weight: 400; }
-    .form-group input,
-    .form-group textarea {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      font-size: 15px;
-      font-family: inherit;
-      color: var(--text);
-      background: #fafafa;
-      transition: border-color 0.15s, box-shadow 0.15s;
-      -webkit-appearance: none;
-    }
-    .form-group input:focus,
-    .form-group textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 4px rgba(0,113,227,0.12);
-      background: #fff;
-    }
-    .form-group textarea { min-height: 120px; resize: vertical; }
+  /* ─── Nav ─── */
+  header.nav{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%);
+    background:linear-gradient(180deg,rgba(10,10,15,.72),rgba(10,10,15,.30));
+    border-bottom:1px solid transparent;transition:border-color .3s,background .3s;
+  }
+  header.nav.scrolled{border-bottom-color:var(--line);background:rgba(10,10,15,.82)}
+  .nav-inner{max-width:var(--maxw);margin:0 auto;padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:700;letter-spacing:-.01em}
+  .brand svg{width:30px;height:30px;display:block;filter:drop-shadow(0 3px 10px rgba(255,61,110,.35))}
+  .brand .zh{font-size:18px}
+  .brand .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--faint);padding:2px 7px;border:1px solid var(--line);border-radius:999px}
+  nav.links{display:flex;align-items:center;gap:30px}
+  nav.links a{font-size:14px;color:var(--mist);transition:color .18s}
+  nav.links a:hover{color:var(--paper)}
+  .nav-right{display:flex;align-items:center;gap:10px}
+  .lang-btn{display:inline-flex;align-items:center;justify-content:center;min-width:40px;height:34px;padding:0 11px;font-family:var(--mono);font-size:12px;font-weight:600;color:var(--mist);border:1px solid var(--line);border-radius:999px;background:var(--glass);cursor:pointer;transition:border-color .2s,color .2s,background .2s}
+  .lang-btn:hover{border-color:rgba(53,224,240,.5);color:var(--paper);background:var(--glass-2)}
+  .gh-btn{
+    display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--paper);
+    padding:8px 15px;border:1px solid var(--line);border-radius:999px;background:var(--glass);transition:border-color .2s,background .2s,transform .2s;
+  }
+  .gh-btn:hover{border-color:rgba(255,122,24,.55);background:var(--glass-2);transform:translateY(-1px)}
+  .gh-btn svg{width:16px;height:16px}
+  .nav-menu{display:none;color:var(--paper);background:none;border:0;cursor:pointer;padding:4px}
 
-    .btn {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 12px 28px;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      font-size: 15px; font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
-      -webkit-appearance: none;
-    }
-    .btn:hover { background: var(--accent-hover); }
-    .btn:active { transform: scale(0.98); }
+  /* ─── Hero ─── */
+  .hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:120px 0 72px}
+  .hero .wrap{width:100%}
+  .hero .kick{opacity:0;animation:rise .8s .05s ease forwards}
+  .hero-title{
+    position:relative;font-weight:800;letter-spacing:-.02em;line-height:.92;
+    font-size:clamp(74px,19vw,208px);margin:20px 0 8px;
+    display:flex;flex-wrap:wrap;gap:.02em .16em;
+  }
+  .hero-title.en-title{font-size:clamp(46px,9.4vw,104px);letter-spacing:-.03em;line-height:1}
+  .hero-title span{
+    display:inline-block;background:var(--aurora);background-size:220% 220%;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    background-position:var(--gpx,50%) 50%;
+    opacity:0;transform:translateY(28px);
+    animation:rise .9s ease forwards, shimmer 9s ease-in-out infinite;
+    filter:drop-shadow(0 8px 40px rgba(255,61,110,.28));
+  }
+  .hero-title span:nth-child(1){animation-delay:.12s,0s}
+  .hero-title span:nth-child(2){animation-delay:.24s,-3s}
+  .hero-title span:nth-child(3){animation-delay:.36s,-6s}
+  @keyframes shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+  .hero-gloss{
+    font-family:var(--mono);font-size:clamp(12px,1.6vw,15px);letter-spacing:.30em;text-transform:uppercase;
+    color:var(--faint);opacity:0;animation:rise .9s .5s ease forwards;
+  }
+  .hero-lead{
+    max-width:620px;margin:30px 0 0;font-size:clamp(17px,2.2vw,21px);color:var(--mist);line-height:1.65;
+    opacity:0;animation:rise .9s .62s ease forwards;
+  }
+  .hero-lead b{color:var(--paper);font-weight:600}
+  .cta-row{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px;opacity:0;animation:rise .9s .74s ease forwards}
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;font-size:15px;font-weight:600;
+    padding:13px 24px;border-radius:999px;transition:transform .2s,box-shadow .3s,border-color .2s,background .2s;
+  }
+  .btn-primary{color:#140a04;background:linear-gradient(100deg,var(--fox),var(--ember));box-shadow:0 10px 34px rgba(255,61,110,.28)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 44px rgba(255,61,110,.42)}
+  .btn-ghost{color:var(--paper);border:1px solid var(--line);background:var(--glass)}
+  .btn-ghost:hover{transform:translateY(-2px);border-color:rgba(124,92,255,.6);background:var(--glass-2)}
+  .btn svg{width:17px;height:17px}
 
-    .form-success {
-      display: none;
-      padding: 16px 20px;
-      background: #f0faf3;
-      border: 1px solid #b8e6c7;
-      border-radius: 12px;
-      color: #1d6d3a;
-      font-size: 14px; font-weight: 500;
-      margin-top: 16px;
-    }
+  .live{
+    display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin-top:38px;
+    padding:11px 16px;border:1px solid var(--line);border-radius:14px;background:var(--glass);
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    font-family:var(--mono);font-size:12.5px;color:var(--mist);
+    opacity:0;animation:rise .9s .9s ease forwards;
+  }
+  .live .lp{color:var(--faint);letter-spacing:.12em;text-transform:uppercase;font-size:11px;display:inline-flex;align-items:center;gap:8px}
+  .live .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 0 0 rgba(53,224,240,.6);animation:pulse 1.8s infinite}
+  .live code b{color:var(--paper);font-style:normal}
+  .live .op{color:var(--fox)}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(53,224,240,.5)}70%{box-shadow:0 0 0 8px rgba(53,224,240,0)}100%{box-shadow:0 0 0 0 rgba(53,224,240,0)}}
 
-    .form-error {
-      display: none;
-      padding: 16px 20px;
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      border-radius: 12px;
-      color: #991b1b;
-      font-size: 14px; font-weight: 500;
-      margin-top: 16px;
-    }
+  .scroll-hint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);color:var(--faint);font-family:var(--mono);font-size:11px;letter-spacing:.2em;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:fade 1s 1.3s ease forwards}
+  .scroll-hint .bar{width:1px;height:34px;background:linear-gradient(var(--faint),transparent);animation:slide 1.8s ease-in-out infinite}
+  @keyframes slide{0%,100%{transform:scaleY(.4);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}}
 
-    /* ── Privacy ── */
-    .privacy-content {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 40px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.7;
-    }
-    .privacy-content h3 { font-size: 18px; font-weight: 600; color: var(--text); margin: 28px 0 10px; }
-    .privacy-content h3:first-child { margin-top: 0; }
-    .privacy-content ul { padding-left: 20px; margin: 8px 0; }
-    .privacy-content li { margin-bottom: 4px; }
-    .privacy-content .last-updated {
-      margin-top: 32px; padding-top: 20px;
-      border-top: 1px solid var(--border);
-      font-size: 13px; color: #999;
-    }
+  @keyframes rise{to{opacity:1;transform:none}}
+  @keyframes fade{to{opacity:1}}
 
-    /* ── Contact ── */
-    .contact-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-    }
-    .contact-card {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 28px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      text-align: center;
-    }
-    .contact-card .contact-icon {
-      width: 40px; height: 40px;
-      background: #f5f5f7;
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 16px;
-    }
-    .contact-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
-    .contact-card a, .contact-card p { font-size: 14px; color: var(--text-secondary); text-decoration: none; }
-    .contact-card a:hover { color: var(--accent); }
+  /* ─── Section frame ─── */
+  section{position:relative;padding:104px 0;scroll-margin-top:72px}
+  .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:52px;flex-wrap:wrap}
+  .sec-head h2{font-size:clamp(30px,4.4vw,46px);font-weight:800;letter-spacing:-.02em;line-height:1.08;margin-top:16px}
+  .sec-head .sub{color:var(--mist);max-width:440px;font-size:15px}
 
-    /* ── Footer ── */
-    footer {
-      max-width: 800px; margin: 0 auto;
-      padding: 32px 24px 48px;
-      display: flex; justify-content: space-between;
-      align-items: center;
-      border-top: 1px solid var(--border);
-    }
-    footer .copyright { font-size: 12px; color: #999; }
-    footer .footer-links { display: flex; gap: 20px; list-style: none; }
-    footer .footer-links a { font-size: 12px; color: #999; text-decoration: none; }
-    footer .footer-links a:hover { color: var(--accent); }
+  [data-reveal]{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+  [data-reveal].in{opacity:1;transform:none}
 
-    @media (max-width: 640px) {
-      .hero { padding: 48px 24px 40px; }
-      .hero h1 { font-size: 36px; }
-      .hero .subtitle { font-size: 17px; }
-      .section h2 { font-size: 26px; }
-      .form-card { padding: 24px; }
-      footer { flex-direction: column; gap: 12px; text-align: center; }
-    }
-  </style>
+  /* ─── Featured works ─── */
+  .work{
+    display:grid;grid-template-columns:1.05fr .95fr;gap:0;align-items:stretch;
+    border:1px solid var(--line);border-radius:24px;overflow:hidden;background:var(--glass);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    margin-bottom:34px;transition:border-color .35s,box-shadow .35s,transform .35s;
+  }
+  .work:hover{border-color:rgba(255,122,24,.4);box-shadow:0 30px 80px rgba(0,0,0,.45),0 0 0 1px rgba(255,122,24,.08) inset;transform:translateY(-3px)}
+  .work.rev .work-media{order:2}
+  .work-body{padding:clamp(28px,4vw,52px);display:flex;flex-direction:column;justify-content:center}
+  .work-meta{font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-bottom:18px}
+  .work-body h3{font-size:clamp(30px,4vw,42px);font-weight:800;letter-spacing:-.02em;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .work-body h3 .cn{font-size:.5em;font-weight:600;color:var(--mist);letter-spacing:0}
+  .work-tag{margin:14px 0 4px;font-size:clamp(17px,2vw,20px);color:var(--paper);font-weight:500}
+  .work-desc{color:var(--mist);font-size:15px;margin-top:12px;line-height:1.66}
+  .chips{display:flex;flex-wrap:wrap;gap:9px;margin:22px 0 26px}
+  .chip{font-family:var(--mono);font-size:12px;color:var(--mist);padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.02)}
+  .chip b{color:var(--fox);font-weight:700}
+  .work-cta{align-self:flex-start;display:inline-flex;align-items:center;gap:9px;font-weight:600;font-size:15px;color:var(--paper);border-bottom:1.5px solid transparent;padding-bottom:2px;transition:gap .2s,border-color .25s,color .2s}
+  .work-cta:hover{gap:14px;border-bottom-color:var(--fox)}
+  .work-cta .ar{color:var(--fox)}
+
+  .work-media{position:relative;overflow:hidden;background:radial-gradient(120% 120% at 70% 10%,#1a1a26,#0b0b12);min-height:340px;display:flex;align-items:center;justify-content:center;padding:34px}
+  .work-media::after{content:"";position:absolute;inset:0;background:radial-gradient(90% 60% at 50% 120%,transparent,rgba(10,10,15,.5));pointer-events:none}
+  .shot{width:100%;border-radius:12px;border:1px solid var(--line);box-shadow:0 26px 60px rgba(0,0,0,.6);transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+  .work:hover .shot{transform:perspective(1200px) rotateY(-4deg) translateZ(20px) scale(1.02)}
+  .glowline{position:absolute;top:0;left:0;right:0;height:2px;background:var(--aurora);opacity:.9;z-index:1}
+
+  /* WhenScript code mock */
+  .codewrap{width:100%;max-width:440px}
+  .code-top{display:flex;align-items:center;gap:7px;padding:0 4px 12px}
+  .code-top i{width:11px;height:11px;border-radius:50%;display:block}
+  .code-top .fn{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--faint)}
+  pre.code{
+    font-family:var(--mono);font-size:13.5px;line-height:1.85;color:#cdd0e0;
+    background:linear-gradient(180deg,#0d0d16,#0a0a11);border:1px solid var(--line);border-radius:12px;
+    padding:20px 22px;overflow-x:auto;box-shadow:0 26px 60px rgba(0,0,0,.55);
+  }
+  pre.code .k{color:var(--volt)}
+  pre.code .o{color:var(--fox);font-weight:700}
+  pre.code .n{color:var(--cyan)}
+  pre.code .c{color:var(--faint);font-style:italic}
+  pre.code .v{color:#e7e7f2}
+  pre.code .live-out{color:var(--ember)}
+
+  /* ─── More projects ─── */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+  .card{
+    display:flex;flex-direction:column;gap:12px;padding:26px 24px;border:1px solid var(--line);border-radius:18px;
+    background:var(--glass);position:relative;overflow:hidden;transition:transform .3s,border-color .3s,background .3s;
+  }
+  .card::before{content:"";position:absolute;inset:0;border-radius:18px;padding:1px;background:var(--aurora);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .3s}
+  .card:hover{transform:translateY(-4px);background:var(--glass-2)}
+  .card:hover::before{opacity:.55}
+  .card-top{display:flex;align-items:center;justify-content:space-between}
+  .lang{font-family:var(--mono);font-size:11.5px;color:var(--mist);display:inline-flex;align-items:center;gap:8px;letter-spacing:.04em}
+  .lang i{width:9px;height:9px;border-radius:50%}
+  .card-top .ext{color:var(--faint);transition:color .2s,transform .2s}
+  .card:hover .ext{color:var(--fox);transform:translate(2px,-2px)}
+  .card h4{font-size:19px;font-weight:700;letter-spacing:-.01em}
+  .card p{color:var(--mist);font-size:14px;line-height:1.6}
+  .all-link{display:inline-flex;align-items:center;gap:9px;margin-top:30px;font-family:var(--mono);font-size:13px;color:var(--mist);transition:gap .2s,color .2s}
+  .all-link:hover{gap:14px;color:var(--paper)}
+  .all-link .ar{color:var(--fox)}
+
+  /* ─── About ─── */
+  .about{display:grid;grid-template-columns:1.3fr .7fr;gap:56px;align-items:start}
+  .about-lead{font-size:clamp(22px,3vw,30px);font-weight:600;line-height:1.5;letter-spacing:-.01em;margin-top:20px}
+  .about-lead .grad{font-weight:800}
+  .about p.body{color:var(--mist);margin-top:22px;font-size:16px;line-height:1.75;max-width:640px}
+  .about p.body b{color:var(--paper)}
+  .facts{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+  .fact{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid var(--line)}
+  .fact dt{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+  .fact dd{text-align:right;color:var(--paper);font-size:14px;font-weight:500}
+  .fact dd span{color:var(--mist);font-weight:400}
+  .fact dd a{color:var(--fox)}
+
+  /* ─── Journal ─── */
+  .timeline{position:relative;margin-left:6px;padding-left:32px}
+  .timeline::before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:1.5px;background:linear-gradient(var(--fox),var(--volt),transparent)}
+  .entry{position:relative;padding:0 0 34px}
+  .entry:last-child{padding-bottom:0}
+  .entry::before{content:"";position:absolute;left:-37px;top:6px;width:11px;height:11px;border-radius:50%;background:var(--ink);border:2px solid var(--fox);box-shadow:0 0 0 4px rgba(255,122,24,.12)}
+  .entry .date{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--faint)}
+  .entry h4{font-size:19px;font-weight:700;margin:5px 0 4px;letter-spacing:-.01em}
+  .entry h4 a{transition:color .2s}
+  .entry h4 a:hover{color:var(--fox)}
+  .entry p{color:var(--mist);font-size:14.5px;max-width:640px}
+
+  /* ─── Contact / CTA band ─── */
+  .contact-band{
+    border:1px solid var(--line);border-radius:26px;padding:clamp(36px,6vw,72px);text-align:center;position:relative;overflow:hidden;
+    background:radial-gradient(120% 130% at 50% -10%,rgba(255,122,24,.12),transparent 55%),var(--glass);
+  }
+  .contact-band h2{font-size:clamp(32px,5.5vw,58px);font-weight:800;letter-spacing:-.02em;line-height:1.05}
+  .contact-band p{color:var(--mist);margin:16px auto 32px;max-width:460px;font-size:16px}
+  .contact-actions{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+
+  /* ─── Footer ─── */
+  footer.site{border-top:1px solid var(--line);margin-top:96px;padding:56px 0 40px}
+  .foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:40px}
+  .foot-brand .brand{margin-bottom:14px}
+  .foot-brand p{color:var(--mist);font-size:14px;max-width:300px;line-height:1.6}
+  .foot-col h5{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:16px}
+  .foot-col a{display:block;color:var(--mist);font-size:14px;padding:5px 0;transition:color .18s}
+  .foot-col a:hover{color:var(--paper)}
+  .foot-bottom{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between;margin-top:48px;padding-top:24px;border-top:1px solid var(--line)}
+  .foot-bottom .cr{color:var(--faint);font-size:13px}
+  .foot-bottom .legal{display:flex;gap:20px}
+  .foot-bottom .legal a{color:var(--faint);font-size:13px;transition:color .18s}
+  .foot-bottom .legal a:hover{color:var(--mist)}
+
+  /* ─── Responsive ─── */
+  @media (max-width:900px){
+    .work,.work.rev .work-media{grid-template-columns:1fr}
+    .work.rev .work-media{order:0}
+    .work-media{min-height:260px}
+    .about{grid-template-columns:1fr;gap:36px}
+    .foot-grid{grid-template-columns:1fr 1fr;gap:32px}
+    nav.links{display:none}
+    .nav-menu{display:block}
+  }
+  @media (max-width:560px){
+    .wrap{padding:0 20px}
+    .nav-inner{padding:0 20px}
+    .brand .tag{display:none}
+    section{padding:76px 0}
+    .foot-grid{grid-template-columns:1fr}
+    .foot-bottom{flex-direction:column;align-items:flex-start}
+    .live{font-size:11.5px}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+    .hero-title span,.hero .kick,.hero-gloss,.hero-lead,.cta-row,.live,.scroll-hint{opacity:1;transform:none}
+    [data-reveal]{opacity:1;transform:none}
+  }
+</style>
 </head>
 <body>
 
-  <nav>
-    <div class="nav-inner">
-      <span class="logo">FasCut</span>
-      <ul class="nav-links">
-        <li><a href="#features">Features</a></li>
-        <li><a href="#feedback">Feedback</a></li>
-        <li><a href="#privacy">Privacy</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </div>
-  </nav>
+<div class="bg-aurora" aria-hidden="true"></div>
+<div class="bg-grid" aria-hidden="true"></div>
+<canvas id="embers" aria-hidden="true"></canvas>
+<div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
 
-  <!-- ── Hero ── -->
-  <section class="hero">
-    <div class="app-icon">
-      <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
-        <rect x="4" y="8" width="36" height="28" rx="4" stroke="#fff" stroke-width="2.5" fill="none"/>
-        <path d="M16 8V36" stroke="#fff" stroke-width="2.5"/>
-        <path d="M28 8V36" stroke="#fff" stroke-width="2.5"/>
-        <polygon points="18,16 26,22 18,28" fill="#fff"/>
-      </svg>
+<!-- ─────────── NAV ─────────── -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#top" aria-label="腾狐科技工作室 · TengFox Studio">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="fg" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FF7A18"/><stop offset=".45" stop-color="#FF3D6E"/><stop offset="1" stop-color="#7C5CFF"/></linearGradient></defs><rect width="64" height="64" rx="15" fill="#0A0A0F"/><path d="M32 11 L18 22 L8 15 L15 33 L32 54 L49 33 L56 15 L46 22 Z" fill="url(#fg)"/><circle cx="24" cy="30" r="2.4" fill="#0A0A0F"/><circle cx="40" cy="30" r="2.4" fill="#0A0A0F"/><path d="M32 40 L28.5 35 L35.5 35 Z" fill="#0A0A0F"/></svg>
+      <span class="zh"><span data-lang="zh">夜诗</span><span data-lang="en">NightPoetry</span></span>
+      <span class="tag"><span data-lang="zh">腾狐科技</span><span data-lang="en">TengFox</span></span>
+    </a>
+    <nav class="links" aria-label="主导航">
+      <a href="#works"><span data-lang="zh">主要作品</span><span data-lang="en">Work</span></a>
+      <a href="#more"><span data-lang="zh">更多作品</span><span data-lang="en">More</span></a>
+      <a href="#about"><span data-lang="zh">关于</span><span data-lang="en">About</span></a>
+      <a href="#journal"><span data-lang="zh">手记</span><span data-lang="en">Journal</span></a>
+      <a href="#contact"><span data-lang="zh">联系</span><span data-lang="en">Contact</span></a>
+    </nav>
+    <div class="nav-right">
+      <button class="lang-btn" id="langBtn" aria-label="切换语言 / Switch language" title="中文 / English">
+        <span data-lang="zh">EN</span><span data-lang="en">中文</span>
+      </button>
+      <a class="gh-btn" href="https://github.com/NightPoetry" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.36-3.88-1.36-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.78 2.73 1.27 3.4.97.1-.75.4-1.27.73-1.56-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.19-3.08-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.18 3.17-1.18.63 1.59.24 2.76.12 3.05.74.8 1.19 1.83 1.19 3.08 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg>
+        GitHub
+      </a>
+      <button class="nav-menu" id="navMenu" aria-label="切换导航 / Toggle menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/></svg>
+      </button>
     </div>
-    <h1>FasCut</h1>
-    <p class="subtitle">Cut by instinct. No menus,&nbsp;no&nbsp;clutter.</p>
-    <span class="badge">Available on macOS</span>
-  </section>
+  </div>
+</header>
 
-  <!-- ── Features ── -->
-  <section class="section" id="features">
-    <h2>Designed for flow</h2>
-    <p class="section-intro">Every tool is where your hand expects it to be. No hunting, no guessing — just the fastest edit you've ever made.</p>
-    <div class="feature-grid">
-      <div class="feature-card">
-        <div class="feature-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1d1d1f" stroke-width="2" stroke-linecap="round">
-            <rect x="3" y="6" width="18" height="12" rx="2"/>
-            <line x1="9" y1="6" x2="9" y2="18"/>
-            <line x1="15" y1="6" x2="15" y2="18"/>
-            <line x1="11" y1="10" x2="13" y2="10"/>
-          </svg>
-        </div>
-        <h3>Space Erase</h3>
-        <p>Select a gap and erase it. Clips snap together — that's a delete, no jargon, no dialog boxes.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1d1d1f" stroke-width="2" stroke-linecap="round">
-            <rect x="3" y="4" width="8" height="12" rx="1.5"/>
-            <rect x="13" y="8" width="8" height="12" rx="1.5"/>
-            <path d="M11 10h2"/>
-          </svg>
-        </div>
-        <h3>Physics Stack</h3>
-        <p>Clips push against each other like physical objects. Drag one and the rest stack neatly behind it.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1d1d1f" stroke-width="2" stroke-linecap="round">
-            <circle cx="12" cy="7" r="3"/>
-            <line x1="12" y1="10" x2="12" y2="20"/>
-            <path d="M8 15l4-4 4 4"/>
-          </svg>
-        </div>
-        <h3>Pin to Lock</h3>
-        <p>Anchor any clip in place with one click. Pinned clips hold firm while everything else slides around them.</p>
-      </div>
+<!-- ─────────── HERO ─────────── -->
+<main id="top">
+<section class="hero" aria-labelledby="hero-title">
+  <div class="wrap">
+    <span class="kick">腾狐科技工作室 &nbsp;//&nbsp; TengFox Studio</span>
+    <h1 class="hero-title" id="hero-title" data-lang="zh" aria-label="触即响"><span>触</span><span>即</span><span>响</span></h1>
+    <h1 class="hero-title en-title" data-lang="en" aria-label="Touch, react."><span>Touch,</span><span>react.</span></h1>
+    <div class="hero-gloss"><span data-lang="zh">touch — and it responds</span><span data-lang="en">触即响 · the instant you act</span></div>
+    <p class="hero-lead">
+      <span data-lang="zh">我是<b>夜诗</b>。一个人写代码，也在教 AI 写代码。<br>做快而利落、<b>凭本能就能上手</b>的工具 —— 为人类，也为 AI。</span>
+      <span data-lang="en">I'm <b>NightPoetry</b>. I write code — and teach AI to write it too.<br>Tools that are fast, sharp, and <b>usable on instinct</b> — for humans, and for AI.</span>
+    </p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#works">
+        <span data-lang="zh">看主要作品</span><span data-lang="en">See the work</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      </a>
+      <a class="btn btn-ghost" href="https://github.com/NightPoetry" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.36-3.88-1.36-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.78 2.73 1.27 3.4.97.1-.75.4-1.27.73-1.56-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.19-3.08-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.18 3.17-1.18.63 1.59.24 2.76.12 3.05.74.8 1.19 1.83 1.19 3.08 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg>
+        <span data-lang="zh">逛逛 GitHub</span><span data-lang="en">Browse GitHub</span>
+      </a>
     </div>
-  </section>
 
-  <!-- ── Feedback ── -->
-  <section class="section" id="feedback">
-    <h2>Something not right?</h2>
-    <p class="section-intro">We aim for tools that feel like touching glass. If anything breaks that instinct, tell us — we fix it within one iteration cycle.</p>
-    <div class="form-card">
-      <form id="feedback-form" novalidate>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="name">Name <span class="optional">(optional)</span></label>
-            <input type="text" id="name" name="name" placeholder="Your name" autocomplete="name">
+    <div class="live" role="status" aria-label="实时反应式演示 / live reactive demo">
+      <span class="lp"><span class="dot"></span><span data-lang="zh">LIVE · 写入即触发</span><span data-lang="en">LIVE · write, it triggers</span></span>
+      <code><span data-lang="zh">触点</span><span data-lang="en">cursor</span> <span class="op">:=</span> (<b id="rx">·</b>, <b id="ry">·</b>)</code>
+      <code><span data-lang="zh">光温</span><span data-lang="en">warmth</span> <span class="op">:=</span> <b id="rw">—</b></code>
+    </div>
+  </div>
+  <div class="scroll-hint" aria-hidden="true"><span>SCROLL</span><span class="bar"></span></div>
+</section>
+
+<!-- ─────────── FEATURED WORKS ─────────── -->
+<section id="works">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <div>
+        <span class="kick"><span data-lang="zh">主要作品 · Featured</span><span data-lang="en">Featured work</span></span>
+        <h2 data-lang="zh">两件<span class="grad">用心打磨</span>的东西</h2>
+        <h2 data-lang="en">Two things, <span class="grad">made with care</span></h2>
+      </div>
+      <p class="sub">
+        <span data-lang="zh">一件给创作者，一件给写代码的人和 AI。都在追同一件事：让工具即时回应你的意图。</span>
+        <span data-lang="en">One for creators, one for coders and AI — both chasing the same thing: tools that answer your intent the instant you express it.</span>
+      </p>
+    </div>
+
+    <!-- FasCut -->
+    <article class="work" data-reveal>
+      <div class="work-media">
+        <div class="glowline" aria-hidden="true"></div>
+        <img class="shot" src="assets/fascut-editing.png" alt="FasCut 视频编辑器界面：深色时间轴、剪辑与音频轨道 / FasCut video editor UI" loading="lazy" width="1600" height="1000">
+      </div>
+      <div class="work-body">
+        <div class="work-meta"><span data-lang="zh">视频剪辑 · macOS · App Store</span><span data-lang="en">Video editing · macOS · App Store</span></div>
+        <h3>FasCut <span class="cn" data-lang="zh">迅影狐</span></h3>
+        <p class="work-tag"><span data-lang="zh">Cut by instinct. 凭本能剪辑。</span><span data-lang="en">Cut by instinct.</span></p>
+        <p class="work-desc">
+          <span data-lang="zh">一款轻量、直觉式的桌面视频剪辑工具。没有层层菜单 —— 选中空隙就删除、片段像实体一样互相挤压堆叠、一键钉住锁定。每个工具都在手会去找的地方。</span>
+          <span data-lang="en">A lightweight, intuitive desktop video editor. No nested menus — select a gap to delete it, clips shove and stack like physical objects, pin any clip to lock it. Every tool sits where your hand expects it.</span>
+        </p>
+        <div class="chips">
+          <span class="chip"><b>Space Erase</b> <span data-lang="zh">空隙即删除</span><span data-lang="en">delete the gap</span></span>
+          <span class="chip"><b>Physics Stack</b> <span data-lang="zh">物理堆叠</span><span data-lang="en">clips with weight</span></span>
+          <span class="chip"><b>Pin to Lock</b> <span data-lang="zh">钉住锁定</span><span data-lang="en">lock in place</span></span>
+        </div>
+        <a class="work-cta" href="fascut/"><span data-lang="zh">进入 FasCut</span><span data-lang="en">Open FasCut</span> <span class="ar">→</span></a>
+      </div>
+    </article>
+
+    <!-- WhenScript -->
+    <article class="work rev" data-reveal>
+      <div class="work-media">
+        <div class="glowline" aria-hidden="true"></div>
+        <div class="codewrap">
+          <div class="code-top" aria-hidden="true">
+            <i style="background:#FF7A18"></i><i style="background:#FF3D6E"></i><i style="background:#7C5CFF"></i>
+            <span class="fn">demo.when</span>
           </div>
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email">
-          </div>
+<pre class="code" aria-label="WhenScript 反应式代码示意 / reactive code sample"><span class="k">let</span> <span class="v">price</span> <span class="o">:=</span> <span class="n">100</span>
+<span class="k">let</span> <span class="v">count</span> <span class="o">:=</span> <span class="n">3</span>
+<span class="k">let</span> <span class="v">total</span> <span class="o">:=</span> <span class="v">price</span> * <span class="v">count</span>   <span class="c">// 300</span>
+
+<span class="v">count</span> <span class="o">=</span> <span class="n">5</span>                    <span class="c"><span data-lang="zh">// 写入一次</span><span data-lang="en">// write once</span></span>
+<span class="c"><span data-lang="zh">// total 自己变成 </span><span data-lang="en">// total becomes </span></span><span class="live-out">500</span><span class="c"><span data-lang="zh"> — 无需订阅</span><span data-lang="en"> — no subscribe</span></span></pre>
         </div>
-        <div class="form-group">
-          <label for="message">What felt unintuitive?</label>
-          <textarea id="message" name="message" placeholder="Describe what you expected to happen, and what happened instead." required></textarea>
-        </div>
-        <button type="submit" class="btn" id="submit-btn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-          Send Feedback
-        </button>
-        <div class="form-success" id="form-success" role="status">
-          Thank you. Your feedback has been submitted. We'll address it promptly.
-        </div>
-        <div class="form-error" id="form-error" role="alert">
-          Unable to send at this moment. Please email us directly.
-        </div>
-      </form>
-    </div>
-  </section>
-
-  <!-- ── Privacy ── -->
-  <section class="section" id="privacy">
-    <h2>Privacy Policy</h2>
-    <p class="section-intro">We take your privacy seriously. Here is how we handle your data.</p>
-    <div class="privacy-content">
-      <h3>1. Information We Collect</h3>
-      <p>FasCut is a native macOS application. We do <strong>not</strong> collect, store, or transmit any personal data from the app itself. The app operates entirely on your device and requires no account or sign-in.</p>
-
-      <h3>2. Feedback Form</h3>
-      <p>When you voluntarily submit feedback through this website, we collect:</p>
-      <ul>
-        <li><strong>Name</strong> (optional) — used only to credit you if your suggestion is implemented</li>
-        <li><strong>Email address</strong> — used solely to respond to your feedback or notify you about its resolution</li>
-        <li><strong>Feedback content</strong> — used to improve the product</li>
-      </ul>
-      <p>This data is never shared, sold, or used for marketing. It is retained only as long as needed to process your feedback.</p>
-
-      <h3>3. Microphone Access</h3>
-      <p>FasCut requests microphone permission solely for recording audio directly onto the timeline. All audio recordings are stored locally on your device. No audio data is ever transmitted externally.</p>
-
-      <h3>4. Third-Party Services</h3>
-      <p>FasCut does not integrate any third-party analytics, advertising, or tracking frameworks. Your activity within the app is never monitored or reported.</p>
-
-      <h3>5. Children's Privacy</h3>
-      <p>FasCut is not directed at children under the age of 13. We do not knowingly collect personal information from children.</p>
-
-      <h3>6. Changes to This Policy</h3>
-      <p>We may update this policy from time to time. Changes will be posted on this page.</p>
-
-      <p class="last-updated">Last updated: May 18, 2026</p>
-    </div>
-  </section>
-
-  <!-- ── Contact ── -->
-  <section class="section" id="contact">
-    <h2>Contact</h2>
-    <p class="section-intro">Need help or have questions? Reach out directly.</p>
-    <div class="contact-grid">
-      <div class="contact-card">
-        <div class="contact-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1d1d1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
-        </div>
-        <h3>Email</h3>
-        <a href="mailto:NightPoetry2025@outlook.com">NightPoetry2025@outlook.com</a>
       </div>
-      <div class="contact-card">
-        <div class="contact-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1d1d1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+      <div class="work-body">
+        <div class="work-meta"><span data-lang="zh">编程语言 · 开源 · 反应式</span><span data-lang="en">Language · Open source · Reactive</span></div>
+        <h3>WhenScript</h3>
+        <p class="work-tag"><span data-lang="zh">写入，即触发。</span><span data-lang="en">Write, and it triggers.</span></p>
+        <p class="work-desc">
+          <span data-lang="zh">一门事件驱动的强类型反应式语言，为人类与 AI 而生。用连续绑定 <b style="color:var(--fox);font-family:var(--mono)">:=</b> 声明依赖：值一变，依赖它的一切自己动。没有轮询，没有手动订阅，也没有虚拟 DOM。</span>
+          <span data-lang="en">An event-driven, strongly-typed reactive language, built for humans and AI. Declare dependencies with continuous binding <b style="color:var(--fox);font-family:var(--mono)">:=</b> — change one value and everything that depends on it updates itself. No polling, no manual subscriptions, no virtual DOM.</span>
+        </p>
+        <div class="chips">
+          <span class="chip"><b>:=</b> <span data-lang="zh">连续绑定</span><span data-lang="en">continuous binding</span></span>
+          <span class="chip"><b>Glitch-free</b> <span data-lang="zh">无毛刺一致</span><span data-lang="en">consistency</span></span>
+          <span class="chip"><b>Concurrency</b> <span data-lang="zh">透明并发</span><span data-lang="en">transparent</span></span>
         </div>
-        <h3>Developer</h3>
-        <p>NightPoetry / FasFox</p>
+        <a class="work-cta" href="whenscript/"><span data-lang="zh">查看 WhenScript</span><span data-lang="en">View WhenScript</span> <span class="ar">→</span></a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ─────────── MORE PROJECTS ─────────── -->
+<section id="more">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <div>
+        <span class="kick"><span data-lang="zh">更多作品 · Also building</span><span data-lang="en">Also building</span></span>
+        <h2 data-lang="zh">一些还在<span class="grad">生长</span>的东西</h2>
+        <h2 data-lang="en">A few things still <span class="grad">growing</span></h2>
+      </div>
+      <p class="sub">
+        <span data-lang="zh">从 AI Agent 到内网穿透，从叙事工具到教育游戏 —— 都是开源的。</span>
+        <span data-lang="en">From AI agents to network tunnels, from storytelling tools to teaching games — all open source.</span>
+      </p>
+    </div>
+    <div class="grid">
+      <a class="card" href="https://github.com/NightPoetry/GrowBox" target="_blank" rel="noopener" data-reveal>
+        <div class="card-top"><span class="lang"><i style="background:#7C5CFF"></i>AI · Agent</span><span class="ext">↗</span></div>
+        <h4>GrowBox</h4>
+        <p><span data-lang="zh">越用越强的持久学习 AI 编码 Agent：分层记忆置换系统（RAG → 精确层飞轮）+ 自研内核。</span><span data-lang="en">A self-improving, persistent-learning AI coding agent: layered memory swapping (RAG → precise-layer flywheel) + a custom kernel.</span></p>
+      </a>
+      <a class="card" href="https://github.com/NightPoetry/fasfox-tunnel" target="_blank" rel="noopener" data-reveal>
+        <div class="card-top"><span class="lang"><i style="background:#FF7A18"></i>Rust · <span data-lang="zh">网络</span><span data-lang="en">Network</span></span><span class="ext">↗</span></div>
+        <h4>fasfox-tunnel</h4>
+        <p><span data-lang="zh">通用内网穿透客户端，多隧道多端口、多平台。无需公网 IP 或域名，把本地端口暴露成公网地址。</span><span data-lang="en">A universal reverse-tunnel client — many tunnels, many ports, cross-platform. Expose local ports as public URLs, no public IP or domain needed.</span></p>
+      </a>
+      <a class="card" href="https://github.com/NightPoetry/story-forge" target="_blank" rel="noopener" data-reveal>
+        <div class="card-top"><span class="lang"><i style="background:#35E0F0"></i>Tauri · React</span><span class="ext">↗</span></div>
+        <h4>story-forge</h4>
+        <p><span data-lang="zh">基于节点树的 AI 辅助小说创作工具，支持分支剧情、伏笔管理与多项目持久化。</span><span data-lang="en">A node-tree AI writing tool for fiction — branching plots, foreshadow tracking, and multi-project persistence.</span></p>
+      </a>
+      <a class="card" href="https://github.com/NightPoetry/WalnutEverMemFoundation" target="_blank" rel="noopener" data-reveal>
+        <div class="card-top"><span class="lang"><i style="background:#FF3D6E"></i>LLM · <span data-lang="zh">记忆</span><span data-lang="en">Memory</span></span><span class="ext">↗</span></div>
+        <h4>WalnutEverMem</h4>
+        <p><span data-lang="zh">基于二值逻辑的 LLM 无限上下文记忆底座 —— 一个给大模型用的记忆操作系统。</span><span data-lang="en">A binary-logic, infinite-context memory foundation for LLMs — a memory OS for large models.</span></p>
+      </a>
+      <a class="card" href="https://github.com/NightPoetry/MCProxy" target="_blank" rel="noopener" data-reveal>
+        <div class="card-top"><span class="lang"><i style="background:#FF7A18"></i>Tauri · Rust</span><span class="ext">↗</span></div>
+        <h4>MCProxy</h4>
+        <p><span data-lang="zh">Minecraft 联机代理 —— 通过中继服务器把局域网联机变成跨互联网联机。</span><span data-lang="en">A Minecraft co-op proxy — turns LAN multiplayer into play-over-the-internet via a relay server.</span></p>
+      </a>
+      <a class="card" href="https://github.com/NightPoetry/wangcai-burger-shop" target="_blank" rel="noopener" data-reveal>
+        <div class="card-top"><span class="lang"><i style="background:#35E0F0"></i>Game · <span data-lang="zh">教育</span><span data-lang="en">Edu</span></span><span class="ext">↗</span></div>
+        <h4><span data-lang="zh">旺财的汉堡店</span><span data-lang="en">Wangcai's Burger Shop</span></h4>
+        <p><span data-lang="zh">英语教学模拟经营游戏 —— TRAE AI 创造力大赛参赛作品。边经营边学英语。</span><span data-lang="en">An English-teaching business sim — a TRAE AI creativity-contest entry. Run a shop while you learn English.</span></p>
+      </a>
+    </div>
+    <a class="all-link" href="https://github.com/NightPoetry?tab=repositories" target="_blank" rel="noopener"><span data-lang="zh">在 GitHub 查看全部仓库</span><span data-lang="en">See all repositories on GitHub</span> <span class="ar">→</span></a>
+  </div>
+</section>
+
+<!-- ─────────── ABOUT ─────────── -->
+<section id="about">
+  <div class="wrap about">
+    <div data-reveal>
+      <span class="kick">关于 · About</span>
+      <p class="about-lead" data-lang="zh">腾狐科技工作室，是<span class="grad">一个人的一条船</span>。造快、利落、有本能反应的软件。</p>
+      <p class="about-lead" data-lang="en">TengFox Studio is <span class="grad">a one-person ship</span>. Software that's fast, sharp, and instinctively reactive.</p>
+      <p class="body" data-lang="zh">白天黑夜都在写代码，也在琢磨怎么让 AI 写得更好。我在意的从来不是功能多，而是「手感」—— 工具应该像触摸玻璃一样，你一动，它就在。所以这里的每件作品，无论是给创作者的剪辑器、给开发者的语言，还是给 AI 的记忆底座，追的都是同一件事：<b>让意图和结果之间，没有延迟。</b></p>
+      <p class="body" data-lang="en">Day and night I write code — and figure out how to make AI write it better. What I care about was never feature count, but feel: a tool should be like touching glass — you move, and it's already there. So every piece here, whether an editor for creators, a language for developers, or a memory foundation for AI, chases one thing: <b>no delay between intent and result.</b></p>
+      <p class="body" data-lang="zh">如果哪里断了这种本能，告诉我，我会在一个迭代周期内修好。</p>
+      <p class="body" data-lang="en">If anything breaks that instinct, tell me — I'll fix it within one iteration cycle.</p>
+    </div>
+    <dl class="facts" data-reveal>
+      <div class="fact"><dt><span data-lang="zh">主理人</span><span data-lang="en">Maker</span></dt><dd>夜诗 <span>· NightPoetry</span></dd></div>
+      <div class="fact"><dt><span data-lang="zh">工作室</span><span data-lang="en">Studio</span></dt><dd><span data-lang="zh">腾狐科技工作室</span><span data-lang="en">TengFox Studio</span></dd></div>
+      <div class="fact"><dt><span data-lang="zh">专注</span><span data-lang="en">Focus</span></dt><dd><span data-lang="zh">创作工具 <span>·</span> 反应式 <span>·</span> AI</span><span data-lang="en">Creative tools <span>·</span> Reactive <span>·</span> AI</span></dd></div>
+      <div class="fact"><dt><span data-lang="zh">平台</span><span data-lang="en">Platform</span></dt><dd><span data-lang="zh">macOS <span>·</span> Web <span>·</span> 开源</span><span data-lang="en">macOS <span>·</span> Web <span>·</span> Open source</span></dd></div>
+      <div class="fact"><dt><span data-lang="zh">邮箱</span><span data-lang="en">Email</span></dt><dd><a href="mailto:NightPoetry2025@outlook.com">NightPoetry2025@outlook.com</a></dd></div>
+      <div class="fact"><dt><span data-lang="zh">代码</span><span data-lang="en">Code</span></dt><dd><a href="https://github.com/NightPoetry" target="_blank" rel="noopener">github.com/NightPoetry</a></dd></div>
+    </dl>
+  </div>
+</section>
+
+<!-- ─────────── JOURNAL ─────────── -->
+<section id="journal">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <div>
+        <span class="kick">手记 · Journal</span>
+        <h2 data-lang="zh">最近在<span class="grad">忙什么</span></h2>
+        <h2 data-lang="en">What I've been <span class="grad">up to</span></h2>
+      </div>
+      <p class="sub"><span data-lang="zh">产品与开源的里程碑，倒序排列。</span><span data-lang="en">Product and open-source milestones, newest first.</span></p>
+    </div>
+    <div class="timeline">
+      <div class="entry" data-reveal>
+        <div class="date">2026.07</div>
+        <h4><a href="whenscript/"><span data-lang="zh">WhenScript 开源发布</span><span data-lang="en">WhenScript open-sourced</span></a></h4>
+        <p><span data-lang="zh">事件驱动的强类型反应式语言正式上线，带 LSP、格式化器与 VS Code 扩展的完整工具链。</span><span data-lang="en">The event-driven, strongly-typed reactive language went live — with a full toolchain: LSP, formatter, and VS Code extension.</span></p>
+      </div>
+      <div class="entry" data-reveal>
+        <div class="date">2026.06</div>
+        <h4><a href="https://github.com/NightPoetry/GrowBox" target="_blank" rel="noopener"><span data-lang="zh">GrowBox 开源</span><span data-lang="en">GrowBox open-sourced</span></a></h4>
+        <p><span data-lang="zh">越用越强的持久学习编码 Agent —— 分层记忆置换 + 自研内核，让 AI 把经验真正沉淀下来。</span><span data-lang="en">A self-improving, persistent-learning coding agent — layered memory swapping + a custom kernel, so AI actually retains experience.</span></p>
+      </div>
+      <div class="entry" data-reveal>
+        <div class="date">2026.05</div>
+        <h4><a href="fascut/"><span data-lang="zh">FasCut 上架 App Store</span><span data-lang="en">FasCut launched on the App Store</span></a></h4>
+        <p><span data-lang="zh">直觉式视频剪辑面世：空隙即删除、物理堆叠、钉住锁定。第一款登陆 Mac App Store 的作品。</span><span data-lang="en">Intuitive video editing arrives: space erase, physics stack, pin to lock. The first work to reach the Mac App Store.</span></p>
+      </div>
+      <div class="entry" data-reveal>
+        <div class="date">2026.05</div>
+        <h4><a href="https://github.com/NightPoetry/fasfox-tunnel" target="_blank" rel="noopener"><span data-lang="zh">fasfox-tunnel 发布</span><span data-lang="en">fasfox-tunnel released</span></a></h4>
+        <p><span data-lang="zh">通用内网穿透客户端 —— 多隧道多端口，一行命令把本地服务暴露到公网。</span><span data-lang="en">A universal reverse-tunnel client — many tunnels and ports; expose local services to the internet in one command.</span></p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <footer>
-    <p class="copyright">&copy; 2026 NightPoetry. All rights reserved.</p>
-    <ul class="footer-links">
-      <li><a href="#privacy">Privacy Policy</a></li>
-      <li><a href="#feedback">Feedback</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-  </footer>
+<!-- ─────────── CONTACT ─────────── -->
+<section id="contact">
+  <div class="wrap">
+    <div class="contact-band" data-reveal>
+      <h2 data-lang="zh">有想法？<span class="grad">聊聊。</span></h2>
+      <h2 data-lang="en">Got an idea? <span class="grad">Let's talk.</span></h2>
+      <p><span data-lang="zh">无论是合作、反馈，还是就想说句你好 —— 我都在读每一封邮件。</span><span data-lang="en">Collaboration, feedback, or just hello — I read every email.</span></p>
+      <div class="contact-actions">
+        <a class="btn btn-primary" href="mailto:NightPoetry2025@outlook.com">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2.5"/><path d="M22 6 12 13 2 6"/></svg>
+          <span data-lang="zh">写封邮件</span><span data-lang="en">Send an email</span>
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/NightPoetry" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.36-3.88-1.36-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.78 2.73 1.27 3.4.97.1-.75.4-1.27.73-1.56-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.19-3.08-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.5 3.17-1.18 3.17-1.18.63 1.59.24 2.76.12 3.05.74.8 1.19 1.83 1.19 3.08 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg>
+          <span data-lang="zh">关注 GitHub</span><span data-lang="en">Follow on GitHub</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
 
-  <script>
-    (function() {
-      var form = document.getElementById('feedback-form');
-      var successEl = document.getElementById('form-success');
-      var errorEl = document.getElementById('form-error');
-      var submitBtn = document.getElementById('submit-btn');
+<!-- ─────────── FOOTER ─────────── -->
+<footer class="site">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="#top">
+          <svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="15" fill="#0A0A0F"/><path d="M32 11 L18 22 L8 15 L15 33 L32 54 L49 33 L56 15 L46 22 Z" fill="url(#fg)"/><circle cx="24" cy="30" r="2.4" fill="#0A0A0F"/><circle cx="40" cy="30" r="2.4" fill="#0A0A0F"/><path d="M32 40 L28.5 35 L35.5 35 Z" fill="#0A0A0F"/></svg>
+          <span class="zh"><span data-lang="zh">夜诗</span><span data-lang="en">NightPoetry</span></span><span class="tag"><span data-lang="zh">腾狐科技</span><span data-lang="en">TengFox</span></span>
+        </a>
+        <p><span data-lang="zh">一个人的工作室，做快而利落的工具 —— 为人类，也为 AI。</span><span data-lang="en">A one-person studio building fast, sharp tools — for humans, and for AI.</span></p>
+      </div>
+      <div class="foot-col">
+        <h5><span data-lang="zh">作品</span><span data-lang="en">Work</span></h5>
+        <a href="fascut/"><span data-lang="zh">FasCut 剪辑</span><span data-lang="en">FasCut editor</span></a>
+        <a href="whenscript/">WhenScript</a>
+        <a href="#more"><span data-lang="zh">更多作品</span><span data-lang="en">More work</span></a>
+        <a href="https://github.com/NightPoetry" target="_blank" rel="noopener"><span data-lang="zh">GitHub 全部</span><span data-lang="en">All on GitHub</span></a>
+      </div>
+      <div class="foot-col">
+        <h5><span data-lang="zh">站点</span><span data-lang="en">Site</span></h5>
+        <a href="#works"><span data-lang="zh">主要作品</span><span data-lang="en">Work</span></a>
+        <a href="#about"><span data-lang="zh">关于</span><span data-lang="en">About</span></a>
+        <a href="#journal"><span data-lang="zh">手记</span><span data-lang="en">Journal</span></a>
+        <a href="#contact"><span data-lang="zh">联系</span><span data-lang="en">Contact</span></a>
+      </div>
+      <div class="foot-col">
+        <h5><span data-lang="zh">联系</span><span data-lang="en">Contact</span></h5>
+        <a href="mailto:NightPoetry2025@outlook.com"><span data-lang="zh">邮箱</span><span data-lang="en">Email</span></a>
+        <a href="fascut/#feedback"><span data-lang="zh">FasCut 反馈</span><span data-lang="en">FasCut feedback</span></a>
+        <a href="fascut/#privacy"><span data-lang="zh">隐私政策</span><span data-lang="en">Privacy</span></a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span class="cr"><span data-lang="zh">© 2026 腾狐科技工作室 · 夜诗（NightPoetry）</span><span data-lang="en">© 2026 TengFox Studio · NightPoetry</span></span>
+      <div class="legal">
+        <a href="fascut/"><span data-lang="zh">FasCut 支持</span><span data-lang="en">FasCut support</span></a>
+        <a href="fascut/#privacy">Privacy</a>
+        <a href="https://github.com/NightPoetry" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </div>
+</footer>
 
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var de = document.documentElement;
 
-        successEl.style.display = 'none';
-        errorEl.style.display = 'none';
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Sending...';
+  /* ── Language toggle (auto-detected in <head>; this is manual override) ── */
+  var langBtn = document.getElementById('langBtn');
+  function applyTitle(){
+    document.title = de.classList.contains('i18n-en')
+      ? 'TengFox Studio · NightPoetry — Touch, react.'
+      : '腾狐科技工作室 · 夜诗 — 触即响';
+  }
+  langBtn.addEventListener('click', function () {
+    var toEn = !de.classList.contains('i18n-en');
+    de.classList.toggle('i18n-en', toEn);
+    de.lang = toEn ? 'en' : 'zh-CN';
+    try { localStorage.setItem('tf-lang', toEn ? 'en' : 'zh'); } catch (e) {}
+    applyTitle();
+  });
+  applyTitle();
 
-        var data = new FormData(form);
-        var body = new URLSearchParams(data).toString();
+  /* Nav: border on scroll + mobile links toggle */
+  var nav = document.getElementById('nav');
+  var onScroll = function(){ nav.classList.toggle('scrolled', window.scrollY > 12); };
+  onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
 
-        fetch('https://spring-sunset-579f.carinnamaile78.workers.dev/api/submit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: body
-        }).then(function(res) {
-          if (!res.ok) throw new Error('HTTP ' + res.status);
-          form.reset();
-          successEl.style.display = 'block';
-        }).catch(function() {
-          errorEl.style.display = 'block';
-        }).finally(function() {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Send Feedback';
-        });
-      });
+  var links = document.querySelector('nav.links');
+  document.getElementById('navMenu').addEventListener('click', function(){
+    var open = links.style.display === 'flex';
+    links.style.display = open ? '' : 'flex';
+    if (!open){ links.style.position='fixed';links.style.top='64px';links.style.right='16px';links.style.flexDirection='column';
+      links.style.gap='4px';links.style.padding='14px 18px';links.style.background='rgba(15,15,22,.96)';
+      links.style.border='1px solid var(--line)';links.style.borderRadius='14px';links.style.backdropFilter='blur(14px)'; }
+  });
+  links.addEventListener('click', function(e){ if(e.target.closest('a') && window.innerWidth<=900){ links.style.display=''; } });
+
+  /* Cursor glow + live reactive readout (the signature) */
+  var glow = document.getElementById('cursorGlow');
+  var rx = document.getElementById('rx'), ry = document.getElementById('ry'), rw = document.getElementById('rw');
+  var tx = window.innerWidth/2, ty = window.innerHeight*0.4, cx = tx, cy = ty, shown = false;
+
+  window.addEventListener('pointermove', function(e){
+    tx = e.clientX; ty = e.clientY;
+    if(!shown){ glow.style.opacity = reduce ? '0' : '1'; shown = true; }
+    rx.textContent = e.clientX;
+    ry.textContent = e.clientY;
+    rw.textContent = Math.round((1 - e.clientY / window.innerHeight) * 100) + '%';
+    de.style.setProperty('--gpx', Math.round((e.clientX / window.innerWidth) * 100) + '%');
+  }, {passive:true});
+
+  if(!reduce){
+    (function loop(){
+      cx += (tx - cx) * 0.14; cy += (ty - cy) * 0.14;
+      glow.style.transform = 'translate3d(' + cx + 'px,' + cy + 'px,0)';
+      requestAnimationFrame(loop);
     })();
-  </script>
+  }
 
+  /* Scroll reveal */
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, {threshold:0.12, rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('[data-reveal]').forEach(function(el){ io.observe(el); });
+
+  /* Fox embers canvas */
+  if(!reduce){
+    var cv = document.getElementById('embers'), ctx = cv.getContext('2d');
+    var dpr = Math.min(window.devicePixelRatio || 1, 2), W, H, parts = [];
+    var cols = ['#FF7A18','#FF3D6E','#7C5CFF','#35E0F0'];
+    function resize(){
+      W = cv.width = innerWidth * dpr; H = cv.height = innerHeight * dpr;
+      cv.style.width = innerWidth+'px'; cv.style.height = innerHeight+'px';
+    }
+    function seed(){
+      var n = innerWidth < 640 ? 18 : 38; parts = [];
+      for(var i=0;i<n;i++){
+        parts.push({ x:Math.random()*W, y:Math.random()*H, r:(Math.random()*1.8+0.6)*dpr,
+          vy:-(Math.random()*0.28+0.06)*dpr, vx:(Math.random()-0.5)*0.14*dpr,
+          a:Math.random()*0.4+0.12, tw:Math.random()*Math.PI*2, c:cols[i % cols.length] });
+      }
+    }
+    resize(); seed();
+    window.addEventListener('resize', function(){ resize(); seed(); });
+    (function draw(){
+      ctx.clearRect(0,0,W,H); ctx.globalCompositeOperation = 'lighter';
+      for(var i=0;i<parts.length;i++){
+        var p = parts[i]; p.y += p.vy; p.x += p.vx; p.tw += 0.02;
+        if(p.y < -10){ p.y = H + 10; p.x = Math.random()*W; }
+        ctx.beginPath(); ctx.shadowBlur = 12*dpr; ctx.shadowColor = p.c;
+        ctx.fillStyle = p.c; ctx.globalAlpha = p.a * (0.6 + 0.4*Math.sin(p.tw));
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+      }
+      ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+      requestAnimationFrame(draw);
+    })();
+  }
+})();
+</script>
 </body>
 </html>
