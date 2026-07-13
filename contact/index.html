@@ -164,7 +164,7 @@
     </form>
 
     <p class="fallback">
-      <span data-lang="zh">也可以直接邮件 </span><span data-lang="en">Or email directly </span><a href="mailto:NightPoetry2025@outlook.com">NightPoetry2025@outlook.com</a>&nbsp;·&nbsp;<a href="https://github.com/NightPoetry" target="_blank" rel="noopener">GitHub</a>
+      <span data-lang="zh">也可以在 </span><span data-lang="en">You can also find me on </span><a href="https://github.com/NightPoetry" target="_blank" rel="noopener">GitHub</a><span data-lang="zh"> 找我，或 </span><span data-lang="en">, or </span><a href="#" id="revealEmail"><span data-lang="zh">点此显示邮箱</span><span data-lang="en">show email</span></a><span data-lang="zh">。</span>
     </p>
   </div>
 </main>
@@ -214,6 +214,11 @@
   function st(kind,msg){ elStatus.className='form-status '+kind; elStatus.textContent=msg; }
   elMsg.placeholder = en() ? PH_EN : PH_ZH;
 
+  // Obfuscated email — never in the static source; assembled only when revealed (click or send-failure fallback).
+  var revealLink = document.getElementById('revealEmail'), revealed = false;
+  function showEmail(){ if(!revealLink || revealed) return; var m = atob('TmlnaHRQb2V0cnkyMDI1QG91dGxvb2suY29t'); revealLink.textContent = m; revealLink.setAttribute('href', 'mailto:' + m); revealed = true; }
+  if(revealLink) revealLink.addEventListener('click', function(e){ if(!revealed){ e.preventDefault(); showEmail(); } });
+
   f.addEventListener('submit', function(e){
     e.preventDefault();
     var E = en();
@@ -225,7 +230,7 @@
     fetch(EP, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name:name, email:email, message:message}) })
       .then(function(r){ if(!r.ok) throw new Error('http '+r.status);
         st('ok', E?('Got it — I\'ll reply to '+email+' soon.'):('已收到你的留言，我会尽快回信到 '+email+'。')); f.reset(); })
-      .catch(function(){ st('err', E?"Couldn't send just now. Please retry, or email NightPoetry2025@outlook.com directly.":'一时没发出去，请稍后重试；急事可直接邮件 NightPoetry2025@outlook.com。'); })
+      .catch(function(){ showEmail(); st('err', E?"Couldn't send just now. Please retry, or use the email shown below.":'一时没发出去，请稍后重试；也可以用下方邮箱直接联系我。'); })
       .finally(function(){ elBtn.disabled = false; });
   });
 })();

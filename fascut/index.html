@@ -404,7 +404,7 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1d1d1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
         </div>
         <h3>Email</h3>
-        <a href="mailto:NightPoetry2025@outlook.com">NightPoetry2025@outlook.com</a>
+        <a href="#" id="reveal-email">Show email</a>
       </div>
       <div class="contact-card">
         <div class="contact-icon">
@@ -440,6 +440,20 @@
       var ENDPOINT = 'https://r5x6516792.goho.co/area/cbec665ad8c7/api/contact';
       function trim(s) { return (s || '').replace(/^\s+|\s+$/g, ''); }
 
+      // Obfuscated email — assembled only on demand (click or send-failure), never in the static source.
+      function tfEmail() { return atob('TmlnaHRQb2V0cnkyMDI1QG91dGxvb2suY29t'); }
+      var revealBtn = document.getElementById('reveal-email');
+      if (revealBtn) {
+        revealBtn.addEventListener('click', function(e) {
+          if (revealBtn.getAttribute('data-shown')) return;
+          e.preventDefault();
+          var m = tfEmail();
+          revealBtn.textContent = m;
+          revealBtn.setAttribute('href', 'mailto:' + m);
+          revealBtn.setAttribute('data-shown', '1');
+        });
+      }
+
       form.addEventListener('submit', function(e) {
         e.preventDefault();
 
@@ -463,6 +477,8 @@
           form.reset();
           successEl.style.display = 'block';
         }).catch(function() {
+          var m = tfEmail();
+          errorEl.innerHTML = 'Unable to send right now. Please retry, or email me directly: <a href="mailto:' + m + '">' + m + '</a>';
           errorEl.style.display = 'block';
         }).finally(function() {
           submitBtn.disabled = false;
